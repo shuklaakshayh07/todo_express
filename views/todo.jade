@@ -1,0 +1,10 @@
+h1 New Todo Task
+form(action="/save",method="post")
+    p
+        label Enter New Task
+        input(type='text',placeholder='new Todo',name='todo-text')
+    p
+        input(type='submit',value='Save')
+   ul
+      each task in todos
+        li #{task.text}
