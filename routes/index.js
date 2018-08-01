@@ -9,15 +9,26 @@ exports.about= function(req,res){
   res.render('index',{title:'about'});
 };
 exports.Todo=function(req,res){
-  var todos =[];
+  var abc =[];
   client.hgetall("TODO",function(err,objs){
-      for(var k in objs){
+      if(objs)
+      {// console.log(Object.keys(objs))
+      for(var k in objs){//console.log('objectInLoop2',k,":",objs[k]);
+            console.log('in loop',objs[k]);
+            var obj=JSON.parse(objs[k]);
+           console.log("after parsing check",k,obj.name);
           var newTodo={
-              text:objs[k]
+              text:obj.name,
+              date:obj.date,
+              check:obj.check
           };
-          todos.push(newTodo);
+          abc.push(newTodo);
       }
-      res.render('todo',{todos:todos});
+    }
+    else{
+      abc=[];
+    }
+       res.render('todo',{todos:abc});
 
 
   });
@@ -25,7 +36,11 @@ exports.Todo=function(req,res){
 exports.saveTodo=function(req,res){
         var newTodo={};
         newTodo.name=req.body['todo-text'];
-        newTodo.id=newTodo.name.replace(" ","-");
-        client.hset("TODO",newTodo.id,newTodo.name);
+        id=newTodo.name.replace(" ","-");
+        newTodo.date=new Date();
+        newTodo.check=false;
+        newTodo=JSON.stringify(newTodo);
+        console.log('savedObject',newTodo);
+        client.hset("TODO",id,newTodo);
         res.redirect("back");
 };
